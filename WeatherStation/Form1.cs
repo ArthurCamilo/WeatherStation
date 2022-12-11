@@ -54,19 +54,19 @@ namespace WeatherStation
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Random rnd = new Random();
+            //Random rnd = new Random();
 
-            var messageA = new MqttApplicationMessageBuilder()
-                .WithTopic(Program.TemperatureTopic)
-                .WithPayload("26,8")
-                .Build();
+            //var messageA = new MqttApplicationMessageBuilder()
+            //    .WithTopic(Program.TemperatureTopic)
+            //    .WithPayload("26,8")
+            //    .Build();
 
-            var messageB = new MqttApplicationMessageBuilder()
-                .WithTopic(Program.HumidityTopic)
-                .WithPayload("27,5")
-                .Build();
+            //var messageB = new MqttApplicationMessageBuilder()
+            //    .WithTopic(Program.HumidityTopic)
+            //    .WithPayload("27,5")
+            //    .Build();
 
-            Program.server.PublishAsync(messageA, messageB);
+            //Program.server.PublishAsync(messageA, messageB);
         }
 
         private void button2_Click(object sender, EventArgs e)

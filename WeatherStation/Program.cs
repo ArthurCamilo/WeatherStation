@@ -1,16 +1,16 @@
 using MQTTnet.Client;
 using MQTTnet;
-using System.Data;
 using System.Text;
 using MQTTnet.Server;
-using MQTTnet.Client.Options;
+using MQTTnet.Packets;
+using System.Windows.Forms;
 
 namespace WeatherStation
 {
     internal static class Program
     {
         static IMqttClient? client;
-        public static IMqttServer? server;
+        //public static IMqttServer? server;
         public static readonly string TemperatureTopic = "Est_Met/Temperatura";
         public static readonly string HumidityTopic = "Est_Met/Umidade";
         static readonly string ClientId = "Est_Met";
@@ -35,54 +35,53 @@ namespace WeatherStation
         {
             var factory = new MqttFactory();
 
-            var serverOptions = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointPort(1883)
-                .WithClientId(ClientId)
-                .Build();
+            //var serverOptions = new MqttServerOptionsBuilder()
+            //    .WithDefaultEndpointPort(1883)
+            //    .WithClientId(ClientId)
+            //    .Build();
+
+            var wifiUser = "VIVO-B251";
+            var wifiPassword = "1615006004";
 
             var clientOptions = new MqttClientOptionsBuilder()
                 .WithClientId(ClientId)
-                .WithTcpServer("localhost", 1883)
+                .WithTcpServer("test.mosquitto.org", 1883)
+                .WithCredentials(wifiUser, wifiPassword)
+                .WithCleanSession()
                 .Build();
 
-            server = factory.CreateMqttServer();
-            await server.StartAsync(serverOptions);
+            //server = factory.CreateMqttServer();
+            //await server.StartAsync(serverOptions);
 
-            client = factory.CreateMqttClient();
+            var managedOptions = new ManagedMqttClientOptionsBuilder()
+                .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+                .WithClientOptions(clientOptions)
+                .Build();
 
-            await client.ConnectAsync(clientOptions, CancellationToken.None);
+            //client = factory.CreateMqttClient();
+
+            //_ = client.ConnectAsync(clientOptions, CancellationToken.None);
+
+            client = new MqttFactory().CreateManagedMqttClient();
+
+            await client.StartAsync(managedOptions);
+
             SubscribeToTopics();
-
-            var messageA = new MqttApplicationMessageBuilder()
-                .WithTopic(TemperatureTopic)
-                .WithPayload("27.0")
-                .Build();
-
-            var messageB = new MqttApplicationMessageBuilder()
-                .WithTopic(HumidityTopic)
-                .WithPayload("60.5")
-                .Build();
-
-            await server.PublishAsync(messageA, messageB);
         }
 
         private async static void SubscribeToTopics()
         {
-            client.UseApplicationMessageReceivedHandler(ConsumeTopicMessage);
+            client.ApplicationMessageReceivedAsync += ConsumeTopicMessage;
 
-            await client.SubscribeAsync(
-                new MqttTopicFilter
-                {
-                    Topic = TemperatureTopic
-                },
-                new MqttTopicFilter
-                {
-                    Topic = HumidityTopic
-                }
-            );
+            var listToSubscribe = new List<MqttTopicFilter> {
+                new MqttTopicFilterBuilder().WithTopic(HumidityTopic).Build(),
+                new MqttTopicFilterBuilder().WithTopic(TemperatureTopic).Build()
+            };
+
+            await client.SubscribeAsync(listToSubscribe);
         }
 
-        private static void ConsumeTopicMessage(MqttApplicationMessageReceivedEventArgs message)
+        private static Task ConsumeTopicMessage(MqttApplicationMessageReceivedEventArgs message)
         {
             string topic = message.ApplicationMessage.Topic;
 
@@ -95,7 +94,7 @@ namespace WeatherStation
             {
                 DatabaseConnection.AddHumidity(floatPayload);
                 CurrentDayMeasuresService.UpdateCurrentDayMeasureHumidity(floatPayload);
-            } 
+            }
             else if (topic == TemperatureTopic)
             {
                 DatabaseConnection.AddTemperature(floatPayload);
@@ -103,20 +102,8 @@ namespace WeatherStation
             }
 
             Console.WriteLine($"Received msg: {payloadText}, Topic: {topic}");
+            return new Task(delegate { Console.WriteLine("Received msg"); });
         }
-
-        // this code runs when a message was received
-        //void ClientMqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
-        //{
-        //    string ReceivedMessage = Encoding.UTF8.GetString(e.Message);
-
-        //    Dispatcher.Invoke(delegate {              // we need this construction because the receiving code in the library and the UI with textbox run on different threads
-        //        string consummedMessage = ReceivedMessage;
-        //        Float messageToFloat = consummedMessage != null ? Float.parse(consummedMessage) : 0.0;
-        //        db.AddTemperature(messageToFloat);
-        //        db.UpdateCurrentMeasureTemperature(messageToFloat);
-        //    });
-        //}
 
     }
 }
