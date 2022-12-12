@@ -9,8 +9,6 @@ namespace WeatherStation
 {
     public partial class Form1 : Form
     {
-        // simple one-way, one-time binding 
-
         public Form1()
         {
             InitializeComponent();
@@ -18,8 +16,9 @@ namespace WeatherStation
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            updateData();
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-            timer.Interval = (4 * 500); // 0.5 sec
+            timer.Interval = (5 * 1000); // 0.5 sec
             timer.Tick += new EventHandler(timer_Tick);
             timer.Start();
         }
@@ -52,28 +51,11 @@ namespace WeatherStation
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Random rnd = new Random();
-
-            var messageA = new MqttApplicationMessageBuilder()
-                .WithTopic(Program.TemperatureTopic)
-                .WithPayload("26,8")
-                .Build();
-
-            var messageB = new MqttApplicationMessageBuilder()
-                .WithTopic(Program.HumidityTopic)
-                .WithPayload("27,5")
-                .Build();
-
-            Program.server.PublishAsync(messageA, messageB);
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < listBox1.SelectedItems.Count; i++)
+            for (int i = 0; i < listBox2.SelectedItems.Count; i++)
             {
-                var item = listBox1.SelectedItems[i].ToString();
+                var item = listBox2.SelectedItems[i].ToString();
                 var dateToDelete = item.Substring(6, 19);
                 DatabaseConnection.DeleteHumidity(dateToDelete);
             }
@@ -82,9 +64,9 @@ namespace WeatherStation
 
         private void button3_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < listBox2.SelectedItems.Count; i++)
+            for (int i = 0; i < listBox1.SelectedItems.Count; i++)
             {
-                var item = listBox2.SelectedItems[i].ToString();
+                var item = listBox1.SelectedItems[i].ToString();
                 var dateToDelete = item.Substring(6, 19);
                 DatabaseConnection.DeleteTemperature(dateToDelete);
             }

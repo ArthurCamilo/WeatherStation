@@ -15,7 +15,7 @@ namespace WeatherStation
 
         public static void SetupDatabase()
         {
-            CreateDatabase();
+            //CreateDatabase();
             CreateTemperatureTable();
             CreateHumidityTable();
             CreateDayMeasuresTable();
@@ -247,7 +247,7 @@ namespace WeatherStation
             {
                 using (var cmd = new SQLiteCommand(DbConnection()))
                 {
-                    cmd.CommandText = "DELETE FROM Temperatures Where Datetime(consumedDate, 'unixepoch')='@consumedDate'";
+                    cmd.CommandText = $"DELETE FROM Temperatures Where Datetime(consumedDate, 'unixepoch')='{consumedDate}'";
                     cmd.Parameters.AddWithValue("@consumedDate", consumedDate);
                     cmd.ExecuteNonQuery();
                 }
@@ -264,8 +264,7 @@ namespace WeatherStation
             {
                 using (var cmd = new SQLiteCommand(DbConnection()))
                 {
-                    cmd.CommandText = "DELETE FROM Humidities Where Datetime(consumedDate, 'unixepoch')='@consumedDate'";
-                    cmd.Parameters.AddWithValue("@consumedDate", consumedDate);
+                    cmd.CommandText = $"DELETE FROM Humidities Where Datetime(consumedDate, 'unixepoch')='{consumedDate}'";
                     cmd.ExecuteNonQuery();
                 }
             }
