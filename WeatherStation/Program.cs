@@ -55,13 +55,6 @@ namespace WeatherStation
                 .WithDefaultEndpointPort(1883)
                 .WithClientId(ClientId)
                 .Build();
-
-            WeatherService.AddHumidity(52.13f);
-            WeatherService.AddHumidity(55.13f);
-            WeatherService.AddTemperature(28);
-            WeatherService.AddTemperature(29);
-            WeatherService.AddTemperature(35);
-            WeatherService.AddTemperature(45);
         }
 
         private static void OnConnectedHandler(MqttClientConnectedEventArgs arg)

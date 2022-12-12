@@ -43,11 +43,17 @@ namespace WeatherStation
             if (currentMeasureDt.Rows.Count != 0)
             {
                 var currentMeasure = DataTypeConverter.ConvertToDayMeasure(currentMeasureDt.Rows[currentMeasureDt.Rows.Count - 1]);
-                richTextBox1.Text = $"Temperatura Atual: {currentMeasure.Temperature};\nUmidade Atual: {currentMeasure.Humidity};\nMédia de temperatura do dia: {currentMeasure.AvgTemperature};\nMédia de umidade do dia: {currentMeasure.AvgHumidity}";
+                label4.Text = $"Temperatura Atual: {currentMeasure.Temperature}";
+                label5.Text = $"Umidade Atual: {currentMeasure.Humidity}";
+                label6.Text = $"Média de temperatura do dia: {currentMeasure.AvgTemperature}";
+                label8.Text = $"Média de umidade do dia: {currentMeasure.AvgHumidity}";
             }
             else
             {
-                richTextBox1.Text = "Ainda sem dados...";
+                label4.Text = $"Temperatura Atual: Carregando...";
+                label5.Text = $"Umidade Atual: Carregando...";
+                label6.Text = $"Média de temperatura do dia: Carregando...";
+                label8.Text = $"Média de umidade do dia: Carregando...";
             }
         }
 
@@ -72,5 +78,6 @@ namespace WeatherStation
             }
             updateData();
         }
+
     }
 }
