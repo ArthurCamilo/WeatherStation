@@ -50,11 +50,6 @@ namespace WeatherStation
             });
 
             await client.ConnectAsync(clientOptions, CancellationToken.None);
-
-            var serverOptions = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointPort(1883)
-                .WithClientId(ClientId)
-                .Build();
         }
 
         private static void OnConnectedHandler(MqttClientConnectedEventArgs arg)

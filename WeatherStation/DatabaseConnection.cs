@@ -15,11 +15,9 @@ namespace WeatherStation
 
         public static void SetupDatabase()
         {
-            //CreateDatabase();
             CreateTemperatureTable();
             CreateHumidityTable();
             CreateDayMeasuresTable();
-            //AddDefaultCurrentMeasurement();
         }
 
         private static SQLiteConnection DbConnection()
@@ -96,7 +94,7 @@ namespace WeatherStation
             {
                 using (var cmd = DbConnection().CreateCommand())
                 {
-                    cmd.CommandText = "SELECT DateTime(ConsumedDate, 'unixepoch') as ConsumedDate, TemperatureValue FROM Temperatures";
+                    cmd.CommandText = "SELECT DateTime(ConsumedDate, 'unixepoch') as ConsumedDate, TemperatureValue FROM Temperatures Order by ConsumedDate Desc";
                     SQLiteDataAdapter da = new SQLiteDataAdapter(cmd.CommandText, DbConnection());
                     da.Fill(dt);
                     return dt;
@@ -115,7 +113,7 @@ namespace WeatherStation
             {
                 using (var cmd = DbConnection().CreateCommand())
                 {
-                    cmd.CommandText = "SELECT DateTime(ConsumedDate, 'unixepoch') as ConsumedDate, HumidityValue FROM Humidities";
+                    cmd.CommandText = "SELECT DateTime(ConsumedDate, 'unixepoch') as ConsumedDate, HumidityValue FROM Humidities Order by ConsumedDate Desc";
                     SQLiteDataAdapter da = new SQLiteDataAdapter(cmd.CommandText, DbConnection());
                     da.Fill(dt);
                     return dt;
@@ -172,7 +170,7 @@ namespace WeatherStation
                 using (var cmd = DbConnection().CreateCommand())
                 {
                     cmd.CommandText = "INSERT INTO Temperatures(ConsumedDate, TemperatureValue) values (@consumedDate, @temperature)";
-                    cmd.Parameters.AddWithValue("@consumedDate", DateTimeOffset.Now.ToUnixTimeSeconds());
+                    cmd.Parameters.AddWithValue("@consumedDate", DateTimeOffset.Now.AddHours(-3).ToUnixTimeSeconds());
                     cmd.Parameters.AddWithValue("@temperature", temperature);
                     cmd.ExecuteNonQuery();
                 }
@@ -190,7 +188,7 @@ namespace WeatherStation
                 using (var cmd = DbConnection().CreateCommand())
                 {
                     cmd.CommandText = "INSERT INTO Humidities(ConsumedDate, HumidityValue) values (@consumedDate, @humidity)";
-                    cmd.Parameters.AddWithValue("@consumedDate", DateTimeOffset.Now.ToUnixTimeSeconds());
+                    cmd.Parameters.AddWithValue("@consumedDate", DateTimeOffset.Now.AddHours(-3).ToUnixTimeSeconds());
                     cmd.Parameters.AddWithValue("@humidity", humidity);
                     cmd.ExecuteNonQuery();
                 }

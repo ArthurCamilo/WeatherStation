@@ -18,7 +18,7 @@ namespace WeatherStation
         {
             updateData();
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-            timer.Interval = (5 * 1000); // 0.5 sec
+            timer.Interval = (5 * 1000); // 5 sec
             timer.Tick += new EventHandler(timer_Tick);
             timer.Start();
         }
@@ -43,10 +43,10 @@ namespace WeatherStation
             if (currentMeasureDt.Rows.Count != 0)
             {
                 var currentMeasure = DataTypeConverter.ConvertToDayMeasure(currentMeasureDt.Rows[currentMeasureDt.Rows.Count - 1]);
-                label4.Text = $"Temperatura Atual: {currentMeasure.Temperature}";
-                label5.Text = $"Umidade Atual: {currentMeasure.Humidity}";
-                label6.Text = $"Média de temperatura do dia: {currentMeasure.AvgTemperature}";
-                label8.Text = $"Média de umidade do dia: {currentMeasure.AvgHumidity}";
+                label4.Text = $"Temperatura Atual: {Math.Round(currentMeasure.Temperature, 2)}º";
+                label5.Text = $"Umidade Atual: {Math.Round(currentMeasure.Humidity, 2)}%";
+                label6.Text = $"Média de temperatura do dia: {Math.Round(currentMeasure.AvgTemperature, 2)}º";
+                label8.Text = $"Média de umidade do dia: {Math.Round(currentMeasure.AvgHumidity, 2)}%";
             }
             else
             {
