@@ -38,7 +38,7 @@ namespace WeatherStation
 
             var clientOptions = new MqttClientOptionsBuilder()
                 .WithClientId($"Est_Met_{DateTime.Now}")
-                .WithTcpServer("broker.hivemq.com", 1883)
+                .WithTcpServer("192.168.141.24", 1883)
                 .Build();
 
             client = factory.CreateMqttClient();
